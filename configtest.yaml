@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: true
+  tasks:
+     
+      - name: Include the config.yaml file
+        include_vars:
+          file: config.yaml
+        when: inventory_file is file 
+      
+      - name: Set MOTD text from config.yaml or use default
+        set_fact:
+          motd_text: "{{config.motd_text | default('ansible managed node by ramos'}}"
+      
+      - name: Create MOTD file
+        template:
+          src: motd.j2
+          dest: /etc/motd
+          notify: Reload MOTD 
+
+
